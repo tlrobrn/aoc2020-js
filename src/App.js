@@ -1,17 +1,42 @@
-import logo from "./logo.svg";
+import { Router, Link } from "@reach/router";
+import Day1 from "./Day1";
 
-function App() {
+export default function App() {
   return (
-    <div class="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md flex items-center space-x-4">
-      <div class="flex-shrink-0">
-        <img class="h-12 w-12" src={logo} alt="ChitChat Logo" />
-      </div>
-      <div>
-        <div class="text-xl font-medium text-black">ChitChat</div>
-        <p class="text-gray-500">You have a new message!</p>
-      </div>
-    </div>
+    <Router>
+      <Main path="/" />
+      <Day path="/day/:dayId" />
+    </Router>
   );
 }
 
-export default App;
+const Main = () => (
+  <div className="flex flex-wrap justify-center">
+    <Card dayId={1}>
+      <CardHeader>Day 1</CardHeader>
+      <CardBody>Content</CardBody>
+    </Card>
+    <Card dayId={2}>
+      <CardHeader>Day 2</CardHeader>
+      <CardBody>Content</CardBody>
+    </Card>
+    <Card dayId={3}>
+      <CardHeader>Day 3</CardHeader>
+      <CardBody>Content 3</CardBody>
+    </Card>
+  </div>
+);
+
+const Card = ({ children, dayId }) => (
+  <Link to={`/day/${dayId}`}>
+    <div className="p-2 m-2 rounded shadow-md">{children}</div>
+  </Link>
+);
+
+const CardHeader = ({ children }) => (
+  <div className="border-b-2">{children}</div>
+);
+
+const CardBody = ({ children }) => <div>{children}</div>;
+
+const Day = ({ dayId }) => (dayId === "1" ? <Day1 /> : <div>Day {dayId}</div>);
