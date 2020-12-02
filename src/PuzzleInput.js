@@ -23,7 +23,7 @@ export function PuzzleInputForm() {
   const { puzzleInput, setPuzzleInput } = usePuzzleInput();
   return (
     <div>
-      <label for="puzzleInput">Puzzle Input:</label>
+      <label htmlFor="puzzleInput">Puzzle Input:</label>
       <textarea
         id="puzzleInput"
         name="puzzleInput"

@@ -19,12 +19,17 @@ export default function Day2() {
   );
 }
 
+const PARSER = /^(?<min>\d+)-(?<max>\d+) (?<letter>.): (?<password>.*)$/;
+
 function Solution() {
   const { puzzleInput } = usePuzzleInput();
   const result = puzzleInput.split(/\n/).reduce((count, line) => {
-    const [policy, password] = line.trim().split(": ", 2);
-    const [counts, letter] = policy.split(/\s+/);
-    const [min, max] = counts.split("-");
+    const match = PARSER.exec(line);
+    if (!match || !match.groups) return count;
+
+    const {
+      groups: { min, max, letter, password },
+    } = match;
     const re = new RegExp(
       `^[^${letter}]*(${letter}[^${letter}]*){${min},${max}}[^${letter}]*$`
     );
@@ -35,5 +40,19 @@ function Solution() {
 }
 
 function Solution2() {
-  return null;
+  const { puzzleInput } = usePuzzleInput();
+  const result = puzzleInput.split(/\n/).reduce((count, line) => {
+    const match = PARSER.exec(line);
+    if (!match || !match.groups) return count;
+
+    const {
+      groups: { min, max, letter, password },
+    } = match;
+
+    return (
+      count + ((password[min - 1] === letter) ^ (password[max - 1] === letter))
+    );
+  }, 0);
+
+  return <div>Part 1: {result}</div>;
 }
