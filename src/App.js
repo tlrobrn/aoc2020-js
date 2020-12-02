@@ -1,10 +1,13 @@
 import { Router, Link } from "@reach/router";
 import Day1 from "./Day1";
+import Day2 from "./Day2";
 
 export default function App() {
   return (
     <Router>
       <Main path="/" />
+      <Day1 path="/day/1" />
+      <Day2 path="/day/2" />
       <Day path="/day/:dayId" />
     </Router>
   );
@@ -39,4 +42,4 @@ const CardHeader = ({ children }) => (
 
 const CardBody = ({ children }) => <div>{children}</div>;
 
-const Day = ({ dayId }) => (dayId === "1" ? <Day1 /> : <div>Day {dayId}</div>);
+const Day = ({ dayId }) => <div>Day {dayId}</div>;
