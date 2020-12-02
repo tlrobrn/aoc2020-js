@@ -6,10 +6,12 @@ import BackgroundImage from "./BackgroundImage.jpg";
 export default function App() {
   return (
     <div
-      className="flex flex-col justify-between h-screen bg-center bg-cover"
+      className="flex flex-col items-center justify-between h-screen bg-center bg-cover"
       style={{ backgroundImage: `url(${BackgroundImage})` }}
     >
-      <header>Advent of Code 2020</header>
+      <header className="p-2 my-2 text-2xl rounded shadow-md bg-gray-50">
+        <Anchor href="https://adventofcode.com">Advent of Code 2020</Anchor>
+      </header>
       <article>
         <Router>
           <Main path="/" />
@@ -18,16 +20,16 @@ export default function App() {
           <Day path="/day/:dayId" />
         </Router>
       </article>
-      <footer>
+      <footer className="p-2 my-2 text-xs text-gray-500 rounded shadow-md bg-gray-50">
         <span>
           Photo by{" "}
-          <a href="https://unsplash.com/@chadmadden?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">
+          <Anchor href="https://unsplash.com/@chadmadden?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">
             Chad Madden
-          </a>{" "}
+          </Anchor>{" "}
           on{" "}
-          <a href="https://unsplash.com/s/photos/christmas?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">
+          <Anchor href="https://unsplash.com/s/photos/christmas?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">
             Unsplash
-          </a>
+          </Anchor>
         </span>
       </footer>
     </div>
@@ -64,3 +66,9 @@ const CardHeader = ({ children }) => (
 const CardBody = ({ children }) => <div>{children}</div>;
 
 const Day = ({ dayId }) => <div>Day {dayId}</div>;
+
+const Anchor = ({ children, href }) => (
+  <a href={href} target="_blank" rel="noreferrer" className="text-green-800">
+    {children}
+  </a>
+);
