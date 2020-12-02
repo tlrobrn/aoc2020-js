@@ -24,8 +24,7 @@ export function PuzzleInputForm() {
   return (
     <div>
       <label for="puzzleInput">Puzzle Input:</label>
-      <input
-        type="textarea"
+      <textarea
         id="puzzleInput"
         name="puzzleInput"
         value={puzzleInput}
