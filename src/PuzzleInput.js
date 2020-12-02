@@ -1,13 +1,14 @@
 import { createContext, useContext, useState } from "react";
-import { node } from "prop-types";
+import { node, string } from "prop-types";
 
 const PuzzleInputContext = createContext();
 
 PuzzleInputProvider.propTypes = {
   children: node,
+  defaultInput: string,
 };
-export function PuzzleInputProvider({ children }) {
-  const [puzzleInput, setPuzzleInput] = useState("");
+export function PuzzleInputProvider({ children, defaultInput = "" }) {
+  const [puzzleInput, setPuzzleInput] = useState(defaultInput);
   return (
     <PuzzleInputContext.Provider value={{ puzzleInput, setPuzzleInput }}>
       {children}

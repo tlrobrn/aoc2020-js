@@ -1,3 +1,4 @@
+import input from "./input";
 import {
   PuzzleInputProvider,
   PuzzleInputForm,
@@ -6,7 +7,7 @@ import {
 
 export default function Day2() {
   return (
-    <PuzzleInputProvider>
+    <PuzzleInputProvider defaultInput={input}>
       <h1>Day 2</h1>
       <PuzzleInputForm />
       <div>
