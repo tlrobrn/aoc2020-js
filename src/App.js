@@ -1,6 +1,7 @@
 import { Router, Link } from "@reach/router";
 import Day1 from "./Day1";
 import Day2 from "./Day2";
+import Day3 from "./Day3";
 import BackgroundImage from "./BackgroundImage.jpg";
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
           <Main path="/" />
           <Day1 path="/day/1" />
           <Day2 path="/day/2" />
+          <Day3 path="/day/3" />
           <Day path="/day/:dayId" />
         </Router>
       </article>

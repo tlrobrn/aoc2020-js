@@ -55,5 +55,5 @@ function Solution2() {
     );
   }, 0);
 
-  return <div>Part 1: {result}</div>;
+  return <div>Part 2: {result}</div>;
 }
