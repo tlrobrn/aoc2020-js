@@ -23,23 +23,42 @@ export default function Day3() {
 function Solution() {
   const { puzzleInput } = usePuzzleInput();
   const map = new TreeMap(puzzleInput);
-  const location = { x: 0, y: 0 };
-  let treeCount = 0;
-
-  while (!map.atBottom(location)) {
-    if (map.isTreeAt(location)) treeCount++;
-    location.x += 3;
-    location.y += 1;
-  }
+  const [treeCount] = testPaths({ map, slopes: [{ dx: 3, dy: 1 }] });
 
   return <div>Part 1: {treeCount}</div>;
 }
 
 function Solution2() {
-  //const { puzzleInput } = usePuzzleInput();
-  const result = "todo";
+  const { puzzleInput } = usePuzzleInput();
+  const map = new TreeMap(puzzleInput);
+  const treeCounts = testPaths({
+    map,
+    slopes: [
+      { dx: 1, dy: 1 },
+      { dx: 3, dy: 1 },
+      { dx: 5, dy: 1 },
+      { dx: 7, dy: 1 },
+      { dx: 1, dy: 2 },
+    ],
+  });
+  const result = treeCounts.reduce((acc, n) => acc * n, 1);
 
   return <div>Part 2: {result}</div>;
+}
+
+function testPaths({ map, slopes }) {
+  return slopes.map(({ dx, dy }) => {
+    const location = { x: 0, y: 0 };
+    let treeCount = 0;
+
+    while (!map.atBottom(location)) {
+      if (map.isTreeAt(location)) treeCount++;
+      location.x += dx;
+      location.y += dy;
+    }
+
+    return treeCount;
+  });
 }
 
 const TREE = "#";
