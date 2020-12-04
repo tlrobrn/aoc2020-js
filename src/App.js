@@ -2,6 +2,7 @@ import { Router, Link } from "@reach/router";
 import Day1 from "./Day1";
 import Day2 from "./Day2";
 import Day3 from "./Day3";
+import Day4 from "./Day4";
 import BackgroundImage from "./BackgroundImage.jpg";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Day1 path="/day/1" />
           <Day2 path="/day/2" />
           <Day3 path="/day/3" />
+          <Day4 path="/day/4" />
           <Day path="/day/:dayId" />
         </Router>
       </article>
@@ -51,6 +53,10 @@ const Main = () => (
     <Card dayId={3}>
       <CardHeader>Day 3</CardHeader>
       <CardBody>Content 3</CardBody>
+    </Card>
+    <Card dayId={4}>
+      <CardHeader>Day 4</CardHeader>
+      <CardBody>Content 4</CardBody>
     </Card>
   </div>
 );
