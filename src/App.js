@@ -3,6 +3,7 @@ import Day1 from "./Day1";
 import Day2 from "./Day2";
 import Day3 from "./Day3";
 import Day4 from "./Day4";
+import Day5 from "./Day5";
 import BackgroundImage from "./BackgroundImage.jpg";
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
           <Day2 path="/day/2" />
           <Day3 path="/day/3" />
           <Day4 path="/day/4" />
+          <Day5 path="/day/5" />
           <Day path="/day/:dayId" />
         </Router>
       </article>
@@ -57,6 +59,10 @@ const Main = () => (
     <Card dayId={4}>
       <CardHeader>Day 4</CardHeader>
       <CardBody>Content 4</CardBody>
+    </Card>
+    <Card dayId={5}>
+      <CardHeader>Day 5</CardHeader>
+      <CardBody>Content 5</CardBody>
     </Card>
   </div>
 );
