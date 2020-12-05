@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"League Spartan"', ...defaultTheme.fontFamily.sans],
+        mono: ['"Source Code Pro"', ...defaultTheme.fontFamily.mono],
       },
     },
   },
