@@ -10,25 +10,32 @@ export default function Day4() {
     <PuzzleInputProvider defaultInput={input}>
       <h1>Day 4</h1>
       <PuzzleInputForm />
-      <div>
-        <Solution />
-      </div>
-      <div>
-        <Solution2 />
-      </div>
+      <Solutions />
     </PuzzleInputProvider>
   );
 }
 
-function Solution() {
+function Solutions() {
   const passports = usePassports();
+  return (
+    <>
+      <div>
+        <Solution passports={passports} />
+      </div>
+      <div>
+        <Solution2 passports={passports} />
+      </div>
+    </>
+  );
+}
+
+function Solution({ passports }) {
   const result = passports.filter((passport) => passport.isComplete()).length;
 
   return <div>Part 1: {result}</div>;
 }
 
-function Solution2() {
-  const passports = usePassports();
+function Solution2({ passports }) {
   const result = passports.filter((passport) => passport.isValid()).length;
 
   return <div>Part 2: {result}</div>;

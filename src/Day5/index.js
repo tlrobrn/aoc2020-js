@@ -10,25 +10,32 @@ export default function Day5() {
     <PuzzleInputProvider defaultInput={input}>
       <h1>Day 5</h1>
       <PuzzleInputForm />
-      <div>
-        <Solution />
-      </div>
-      <div>
-        <Solution2 />
-      </div>
+      <Solutions />
     </PuzzleInputProvider>
   );
 }
 
-function Solution() {
+function Solutions() {
   const seats = useSeats();
+  return (
+    <>
+      <div>
+        <Solution seats={seats} />
+      </div>
+      <div>
+        <Solution2 seats={seats} />
+      </div>
+    </>
+  );
+}
+
+function Solution({ seats }) {
   const result = seats[seats.length - 1];
 
   return <div>Part 1: {result.id}</div>;
 }
 
-function Solution2() {
-  const seats = useSeats();
+function Solution2({ seats }) {
   let result = null;
   for (let i = 1; i < seats.length; ++i) {
     if (seats[i - 1].id === seats[i].id - 2) {
