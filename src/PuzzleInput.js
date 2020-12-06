@@ -11,7 +11,7 @@ export function PuzzleInputProvider({ children, defaultInput = "" }) {
   const [puzzleInput, setPuzzleInput] = useState(defaultInput);
   return (
     <PuzzleInputContext.Provider value={{ puzzleInput, setPuzzleInput }}>
-      {children}
+      <div className="p-2 m-2 rounded shadow-md bg-gray-50">{children}</div>
     </PuzzleInputContext.Provider>
   );
 }
