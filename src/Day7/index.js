@@ -36,7 +36,7 @@ function Solution({ graph }) {
 }
 
 function Solution2({ graph }) {
-  const result = bagCount({ graph, bags: ["shiny gold"] });
+  const result = bagCount({ graph, bags: new Map([["shiny gold", 1]]) });
 
   return <div>Part 2: {result}</div>;
 }
@@ -77,12 +77,20 @@ function bagsContaining({ graph, targets, currentBagsFound = [] }) {
 }
 
 function bagCount({ graph, bags, count = 0 }) {
-  if (bags.length === 0) return count;
+  if (bags.size === 0) return count;
 
-  const newBags = bags.flatMap((bag) =>
-    graph.flatMap(([from, to = null, count = 0]) =>
-      from === bag ? Array(count).fill(to) : []
-    )
+  const newBags = graph.reduce(
+    (acc, [from, to, count]) =>
+      bags.has(from) && to
+        ? acc.set(to, (acc.get(to) || 0) + count * bags.get(from))
+        : acc,
+    new Map()
   );
-  return bagCount({ graph, bags: newBags, count: count + newBags.length });
+
+  return bagCount({
+    graph,
+    bags: newBags,
+    count:
+      count + Array.from(newBags.values()).reduce((total, n) => total + n, 0),
+  });
 }
