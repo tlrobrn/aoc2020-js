@@ -80,10 +80,9 @@ function bagCount({ graph, bags, count = 0 }) {
   if (bags.length === 0) return count;
 
   const newBags = bags.flatMap((bag) =>
-    graph.flatMap(([from, to = null, count = 0]) => {
-      if (from !== bag) return [];
-      return Array(count).fill(to);
-    })
+    graph.flatMap(([from, to = null, count = 0]) =>
+      from === bag ? Array(count).fill(to) : []
+    )
   );
   return bagCount({ graph, bags: newBags, count: count + newBags.length });
 }
