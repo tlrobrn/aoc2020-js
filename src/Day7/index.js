@@ -36,7 +36,7 @@ function Solution({ graph }) {
 }
 
 function Solution2({ graph }) {
-  const result = graph.length;
+  const result = bagCount({ graph, bags: ["shiny gold"] });
 
   return <div>Part 2: {result}</div>;
 }
@@ -50,26 +50,40 @@ const TO_REGEX = /^\s*(?<count>\d+)\s+(?<to>.*)\s+bag/;
 
 function buildEdge(line) {
   const [from, tos] = line.split(" bags contain ");
-  if (tos === "no other bags.") return [[from]];
+  if (tos === "no other bags." || tos === undefined) return [[from]];
   return tos.split(", ").map((toDesc) => {
     const match = TO_REGEX.exec(toDesc);
     if (!match) throw new Error("could not match: " + toDesc);
-    return [from, match.groups.to, match.groups.count];
+    return [from, match.groups.to, parseInt(match.groups.count, 10)];
   });
 }
 
 function bagsContaining({ graph, targets, currentBagsFound = [] }) {
   if (targets.length === 0) return currentBagsFound;
 
-  const newBagsFound = graph.flatMap(([from, to]) =>
-    targets.includes(to) ? [from] : []
+  const newBagsFound = Array.from(
+    new Set(
+      graph.flatMap(([from, to]) =>
+        targets.includes(to) && !currentBagsFound.includes(from) ? [from] : []
+      )
+    )
   );
 
   return bagsContaining({
     graph,
-    targets: newBagsFound.filter((bag) => !currentBagsFound.includes(bag)),
-    currentBagsFound: Array.from(
-      new Set(currentBagsFound.concat(newBagsFound))
-    ),
+    targets: newBagsFound,
+    currentBagsFound: currentBagsFound.concat(newBagsFound),
   });
+}
+
+function bagCount({ graph, bags, count = 0 }) {
+  if (bags.length === 0) return count;
+
+  const newBags = bags.flatMap((bag) =>
+    graph.flatMap(([from, to = null, count = 0]) => {
+      if (from !== bag) return [];
+      return Array(count).fill(to);
+    })
+  );
+  return bagCount({ graph, bags: newBags, count: count + newBags.length });
 }
