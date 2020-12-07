@@ -57,38 +57,27 @@ function compareSeatId({ id: a }, { id: b }) {
 }
 
 function decode(seat) {
-  const row = decodeRow(seat.slice(0, 7));
-  const column = decodeColumn(seat.slice(7));
+  const row = decodeBinary({
+    value: seat.slice(0, 7),
+    range: [0, 127],
+    lowForChar: "F",
+  });
+  const column = decodeBinary({
+    value: seat.slice(7),
+    range: [0, 7],
+    lowForChar: "L",
+  });
   return { id: 8 * row + column, row, column };
 }
 
-function decodeRow(encodedRow) {
-  const [row] = encodedRow.split("").reduce(
-    ([low, high], c) => {
-      const mid = Math.floor((high + low) / 2);
-      if (c === "F") {
-        return [low, mid];
-      } else {
-        return [mid + 1, high];
-      }
-    },
-    [0, 127]
-  );
-
-  return row;
-}
-
-function decodeColumn(encodedColumn) {
-  const [column] = encodedColumn.split("").reduce(
-    ([low, high], c) => {
-      const mid = Math.floor((high + low) / 2);
-      if (c === "L") {
-        return [low, mid];
-      } else {
-        return [mid + 1, high];
-      }
-    },
-    [0, 7]
-  );
-  return column;
+function decodeBinary({ value, range, lowForChar }) {
+  const [n] = value.split("").reduce(([low, high], c) => {
+    const mid = Math.floor((high + low) / 2);
+    if (c === lowForChar) {
+      return [low, mid];
+    } else {
+      return [mid + 1, high];
+    }
+  }, range);
+  return n;
 }
