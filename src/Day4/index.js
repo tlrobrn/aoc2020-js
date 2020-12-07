@@ -95,32 +95,35 @@ class Field {
   }
 
   constructor(value) {
-    this.value = value;
+    this.value = this.parseValue(value);
   }
 
   isValid() {
     return false;
   }
+
+  parseValue = (v) => v;
 }
 
-class ByrField extends Field {
+class IntField extends Field {
+  parseValue = (v) => parseInt(v, 10);
+}
+
+class ByrField extends IntField {
   isValid() {
-    const n = parseInt(this.value, 10);
-    return n >= 1920 && n <= 2002;
+    return this.value >= 1920 && this.value <= 2002;
   }
 }
 
-class IyrField extends Field {
+class IyrField extends IntField {
   isValid() {
-    const n = parseInt(this.value, 10);
-    return n >= 2010 && n <= 2020;
+    return this.value >= 2010 && this.value <= 2020;
   }
 }
 
-class EyrField extends Field {
+class EyrField extends IntField {
   isValid() {
-    const n = parseInt(this.value, 10);
-    return n >= 2020 && n <= 2030;
+    return this.value >= 2020 && this.value <= 2030;
   }
 }
 
