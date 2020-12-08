@@ -138,10 +138,10 @@ function debugComputer({ instructions }) {
     const instruction = instructions[i];
     if (instruction instanceof AccInstruction) continue;
 
-    instructions.splice(i, 1, instruction.swap());
+    instructions[i] = instruction.swap();
     const computer = new Computer(instructions);
     computer.run();
-    instructions.splice(i, 1, instruction);
+    instructions[i] = instruction;
 
     if (computer.completed()) return computer.accumulator;
   }
