@@ -22,26 +22,26 @@ export default function Day8() {
 
 function Solution() {
   const computer = useComputer();
-  const result = computer.runUntilLoop().accumulator;
+  const result = computer.run().accumulator;
 
   return <div>Part 1: {result}</div>;
 }
 
 function Solution2() {
   const computer = useComputer();
-  const result = computer.accumulator;
+  const result = debugComputer(computer);
 
   return <div>Part 2: {result}</div>;
 }
 
 function useComputer() {
   const { puzzleInput } = usePuzzleInput();
-  return new Computer(puzzleInput);
+  return new Computer(parse(puzzleInput));
 }
 
 class Computer {
-  constructor(input) {
-    this.instructions = parse(input);
+  constructor(instructions) {
+    this.instructions = instructions;
     this.instructionPtr = 0;
     this.accumulator = 0;
   }
@@ -54,14 +54,16 @@ class Computer {
     return this;
   }
 
-  runUntilLoop() {
+  run() {
     const seen = new Set();
-    while (!seen.has(this.instructionPtr)) {
+    while (!this.completed() && !seen.has(this.instructionPtr)) {
       seen.add(this.instructionPtr);
       this.step();
     }
     return this;
   }
+
+  completed = () => this.instructionPtr === this.instructions.length;
 }
 
 class Instruction {
@@ -96,8 +98,8 @@ class Instruction {
     return { accumulator, instructionPtr: instructionPtr + 1 };
   }
 
-  toString() {
-    return `nop ${this.argument}`;
+  swap() {
+    return new JmpInstruction(this.argument);
   }
 }
 
@@ -109,8 +111,8 @@ class AccInstruction extends Instruction {
     };
   }
 
-  toString() {
-    return `acc ${this.argument}`;
+  swap() {
+    return this;
   }
 }
 
@@ -122,11 +124,25 @@ class JmpInstruction extends Instruction {
     };
   }
 
-  toString() {
-    return `jmp ${this.argument}`;
+  swap() {
+    return new Instruction(this.argument);
   }
 }
 
 function parse(input) {
   return input.split(/\n/).map(Instruction.for);
+}
+
+function debugComputer({ instructions }) {
+  for (let i = 0; i < instructions.length; i++) {
+    const instruction = instructions[i];
+    if (instruction instanceof AccInstruction) continue;
+
+    instructions.splice(i, 1, instruction.swap());
+    const computer = new Computer(instructions);
+    computer.run();
+    instructions.splice(i, 1, instruction);
+
+    if (computer.completed()) return computer.accumulator;
+  }
 }
