@@ -29,7 +29,9 @@ function Solution() {
 
 function Solution2() {
   const numbers = useNumbers();
-  const result = numbers.length;
+  const target = findInvalid(numbers);
+  const sequence = findSequence(numbers, target).sort();
+  const result = sequence[0] + sequence[sequence.length - 1];
 
   return <div>Part 2: {result}</div>;
 }
@@ -57,4 +59,21 @@ function findPair(numbers, { start, end }) {
     seen.add(n);
   }
   return false;
+}
+
+function findSequence(numbers, target) {
+  let start = 0;
+  let end = 2;
+  let sum = numbers[0] + numbers[1];
+  while (sum !== target) {
+    if (sum > target) {
+      sum -= numbers[start];
+      start++;
+    } else {
+      sum += numbers[end];
+      end++;
+    }
+  }
+
+  return numbers.slice(start, end);
 }
