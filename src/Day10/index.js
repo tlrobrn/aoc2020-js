@@ -37,7 +37,7 @@ function Solution({ numbers }) {
 }
 
 function Solution2({ numbers }) {
-  const result = numbers.length;
+  const result = countPaths(numbers);
 
   return <div>Part 2: {result}</div>;
 }
@@ -65,4 +65,40 @@ function countDifferences(numbers) {
     );
   }
   return differenceCounts;
+}
+
+function countPaths(numbers) {
+  const graph = [0, ...numbers, numbers[numbers.length - 1] + 3];
+  const counts = Array.from({ length: graph.length }).map(() => 0);
+  const target = graph.length - 1;
+  counts[target] = 1;
+  const queue = indicesWithPathsTo(graph, target);
+  while (queue.length > 0) {
+    const next = queue.shift();
+    if (counts[next] === 0) {
+      counts[next] = indicesWithPathsFrom(graph, next).reduce(
+        (total, i) => total + counts[i],
+        0
+      );
+      queue.push(...indicesWithPathsTo(graph, next));
+    }
+  }
+
+  return counts[0];
+}
+
+function indicesWithPathsFrom(graph, index) {
+  const node = graph[index];
+  return [index + 1, index + 2, index + 3].flatMap((i) => {
+    const candidate = graph[i];
+    return candidate !== undefined && candidate - node <= 3 ? [i] : [];
+  });
+}
+
+function indicesWithPathsTo(graph, index) {
+  const node = graph[index];
+  return [index - 1, index - 2, index - 3].flatMap((i) => {
+    const candidate = graph[i];
+    return candidate !== undefined && node - candidate <= 3 ? [i] : [];
+  });
 }
