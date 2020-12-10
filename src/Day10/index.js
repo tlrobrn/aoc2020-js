@@ -31,7 +31,7 @@ function Solutions() {
 
 function Solution({ numbers }) {
   const counts = countDifferences(numbers);
-  const result = counts.get(1) * counts.get(3);
+  const result = counts[1] * counts[3];
 
   return <div>Part 1: {result}</div>;
 }
@@ -49,20 +49,11 @@ function useSortedNumbers() {
 }
 
 function countDifferences(numbers) {
-  const edgeCounts =
-    numbers[0] === 3
-      ? [[3, 2]]
-      : [
-          [3, 1],
-          [numbers[0], 1],
-        ];
-  const differenceCounts = new Map(edgeCounts);
+  const differenceCounts = [0, 0, 0, 1];
+  differenceCounts[numbers[0]]++;
   for (let i = 1; i < numbers.length; i++) {
     const difference = numbers[i] - numbers[i - 1];
-    differenceCounts.set(
-      difference,
-      (differenceCounts.get(difference) || 0) + 1
-    );
+    differenceCounts[difference]++;
   }
   return differenceCounts;
 }
