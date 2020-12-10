@@ -10,6 +10,7 @@ import Day6 from "./Day6";
 import Day7 from "./Day7";
 import Day8 from "./Day8";
 import Day9 from "./Day9";
+import Day10 from "./Day10";
 import BackgroundImage from "./BackgroundImage.jpg";
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
           <Day7 path="/day/7" />
           <Day8 path="/day/8" />
           <Day9 path="/day/9" />
+          <Day10 path="/day/10" />
           <Day path="/day/:dayId" />
         </Router>
       </article>
@@ -92,9 +94,7 @@ const Main = () => (
     </Card>
     <Card dayId={10}>
       <CardHeader>Day 10</CardHeader>
-      <CardBody>
-        <Countdown day={10} />
-      </CardBody>
+      <CardBody>Content 10</CardBody>
     </Card>
     <Card dayId={11}>
       <CardHeader>Day 11</CardHeader>
