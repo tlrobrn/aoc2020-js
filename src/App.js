@@ -1,4 +1,6 @@
+import { useEffect, useRef, useState } from "react";
 import { Router, Link } from "@reach/router";
+import { DateTime, Interval } from "luxon";
 import Day1 from "./Day1";
 import Day2 from "./Day2";
 import Day3 from "./Day3";
@@ -88,8 +90,63 @@ const Main = () => (
       <CardHeader>Day 9</CardHeader>
       <CardBody>Content 9</CardBody>
     </Card>
+    <Card dayId={10}>
+      <CardHeader>Day 10</CardHeader>
+      <CardBody>
+        <Countdown day={10} />
+      </CardBody>
+    </Card>
+    <Card dayId={11}>
+      <CardHeader>Day 11</CardHeader>
+      <CardBody>
+        <Countdown day={11} />
+      </CardBody>
+    </Card>
+    <Card dayId={12}>
+      <CardHeader>Day 12</CardHeader>
+      <CardBody>
+        <Countdown day={12} />
+      </CardBody>
+    </Card>
   </div>
 );
+
+const dateTimeForDay = (day) =>
+  DateTime.fromObject({
+    month: 12,
+    day,
+    zone: "America/New_York",
+  });
+
+const hoursMinutesSecondsUntil = (day) =>
+  Interval.fromDateTimes(DateTime.local(), dateTimeForDay(day)).toDuration([
+    "hours",
+    "minutes",
+    "seconds",
+  ]);
+
+function useCountdown(day) {
+  const requestId = useRef();
+  const [remainingTime, setRemainingTime] = useState(
+    hoursMinutesSecondsUntil(day)
+  );
+
+  useEffect(() => {
+    const updateRemainingTime = () => {
+      setRemainingTime(hoursMinutesSecondsUntil(day));
+      requestId.current = requestAnimationFrame(updateRemainingTime);
+    };
+    requestId.current = requestAnimationFrame(updateRemainingTime);
+    return () => requestId.current && cancelAnimationFrame(requestId.current);
+  }, [day]);
+
+  return remainingTime;
+}
+
+const Countdown = ({ day }) => {
+  const countdown = useCountdown(day);
+  return countdown.toFormat("hh:mm:ss");
+};
 
 const Card = ({ children, dayId }) => (
   <Link to={`/day/${dayId}`}>
