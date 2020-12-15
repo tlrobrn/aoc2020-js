@@ -1,4 +1,4 @@
-import input from "./input";
+import { input } from "./input";
 import {
   PuzzleInputProvider,
   PuzzleInputForm,
@@ -21,133 +21,155 @@ export default function Day11() {
 }
 
 function Solution() {
-  const grid = useGrid();
-  while (grid.advanceModel());
-  const result = grid.occupiedSeatCount();
+  const seats = useSeats(1);
+  while (seats.step());
+  const result = seats.countPeople();
 
   return <div>Part 1: {result}</div>;
 }
 
 function Solution2() {
-  const result = "todo";
+  const seats = useSeats(2);
+  while (seats.step());
+  const result = seats.countPeople();
 
   return <div>Part 2: {result}</div>;
 }
 
-function useGrid() {
-  const { puzzleInput } = usePuzzleInput();
-  return new Grid(puzzleInput);
-}
+const DELTAS = [-1, 0, 1];
 
-class Grid {
+class Seats {
   constructor(input) {
-    this.cells = input.split(/\n/).map((line, y) =>
-      line
-        .trim()
-        .split("")
-        .map((c, x) => Cell.parse(c, { x, y }))
-    );
-    this.height = this.cells.length;
-    this.width = this.cells[0].length;
-    this.changed = false;
-  }
-
-  advanceModel() {
-    this.changed = false;
-    const newCells = this.cells.map((line) =>
-      line.map((cell) => cell.advanceModel(this))
-    );
-    this.cells = newCells;
-    return this.changed;
-  }
-
-  markChanged() {
-    this.changed = true;
-  }
-
-  occupiedSeatCount() {
-    return this.cells.reduce(
-      (total, row) =>
-        row.reduce(
-          (count, cell) => (cell.isOccupied() ? count + 1 : count),
-          total
-        ),
-      0
+    this.seats = input.split(/\n/).reduce(
+      (allSeats, line, y) =>
+        line
+          .trim()
+          .split("")
+          .reduce((seats, c, x) => {
+            if (c === "L") {
+              seats.set(this.keyFor({ x, y }), { x, y, occupied: false });
+            } else if (c === "#") {
+              seats.set(this.keyFor({ x, y }), { x, y, occupied: true });
+            }
+            return seats;
+          }, allSeats),
+      new Map()
     );
   }
-}
 
-class Cell {
-  static parse(char, coordinates) {
-    switch (char) {
-      case "L":
-        return new EmptySeat(coordinates);
-      case "#":
-        return new OccupiedSeat(coordinates);
-      default:
-        return new Floor(coordinates);
+  toString() {
+    let s = "";
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        const seat = this.get({ x, y });
+
+        if (!seat) {
+          s = s.concat(".");
+        } else if (seat.occupied) {
+          s = s.concat("#");
+        } else {
+          s = s.concat("L");
+        }
+      }
+
+      s = s.concat("\n");
+    }
+
+    return s;
+  }
+
+  step() {
+    let dirty = false;
+    const newSeats = new Map();
+
+    for (let seat of this.seats.values()) {
+      const newSeat = this.stepSeat(seat);
+      newSeats.set(this.keyFor(newSeat), newSeat);
+      if (newSeat !== seat) dirty = true;
+    }
+
+    this.seats = newSeats;
+    return dirty;
+  }
+
+  stepSeat(seat) {
+    const occupiedNeighborsCount = this.occupiedNeighbors(seat).length;
+    if (seat.occupied) {
+      return occupiedNeighborsCount < this.tooManyNeighborsCount()
+        ? seat
+        : { ...seat, occupied: false };
+    } else {
+      return occupiedNeighborsCount > 0 ? seat : { ...seat, occupied: true };
     }
   }
 
-  constructor({ x, y }) {
-    this.x = x;
-    this.y = y;
-  }
-
-  isOccupied() {
-    return false;
-  }
-
-  advanceModel(grid) {
-    const next = this.next(grid);
-    if (next !== this) grid.markChanged();
-    return next;
-  }
-
-  neighbors(grid) {
-    const deltas = [-1, 0, 1];
-    return deltas.flatMap((dy) => {
-      const row = grid.cells[this.y + dy];
-      if (!row) return [];
-      return deltas.flatMap((dx) => {
-        const cell = row[this.x + dx];
-        return cell && cell !== this ? [cell] : [];
-      });
-    });
-  }
-
-  countOccupiedNeighbors(grid) {
-    return this.neighbors(grid).reduce(
-      (count, cell) => (cell.isOccupied() ? count + 1 : count),
+  countPeople() {
+    return Array.from(this.seats.values()).reduce(
+      (count, { occupied }) => (occupied ? count + 1 : count),
       0
     );
   }
 
-  next(_grid) {
-    throw new Error("not implemented");
+  tooManyNeighborsCount() {
+    return 4;
+  }
+
+  occupiedNeighbors(targetSeat) {
+    const { x, y } = targetSeat;
+    return DELTAS.flatMap((dy) =>
+      DELTAS.flatMap((dx) => {
+        if (dx === 0 && dy === 0) return [];
+        const seat = this.nearestNeighbor({ x, y, dx, dy });
+        return seat && seat.occupied ? [seat] : [];
+      })
+    );
+  }
+
+  nearestNeighbor({ x, y, dx, dy }) {
+    return this.get({ x: x + dx, y: y + dy });
+  }
+
+  keyFor({ x, y }) {
+    return JSON.stringify({ x, y });
+  }
+
+  get(coords) {
+    return this.seats.get(this.keyFor(coords));
+  }
+
+  get width() {
+    if (this._width !== undefined) return this._width;
+    return (this._width =
+      Array.from(this.seats.values()).sort(({ x: a }, { x: b }) => b - a)[0].x +
+      1);
+  }
+
+  get height() {
+    if (this._height !== undefined) return this._height;
+    return (this._height =
+      Array.from(this.seats.values()).sort(({ y: a }, { y: b }) => b - a)[0].y +
+      1);
   }
 }
 
-class EmptySeat extends Cell {
-  next(grid) {
-    return this.countOccupiedNeighbors(grid) > 0
-      ? this
-      : new OccupiedSeat(this);
+class UpdatedSeats extends Seats {
+  tooManyNeighborsCount() {
+    return 5;
+  }
+
+  nearestNeighbor({ x, y, dx, dy }) {
+    for (
+      let nx = x + dx, ny = y + dy;
+      nx < this.width && nx >= 0 && ny < this.height && ny >= 0;
+      nx += dx, ny += dy
+    ) {
+      const seat = this.get({ x: nx, y: ny });
+      if (seat) return seat;
+    }
   }
 }
 
-class OccupiedSeat extends Cell {
-  isOccupied() {
-    return true;
-  }
-
-  next(grid) {
-    return this.countOccupiedNeighbors(grid) < 4 ? this : new EmptySeat(this);
-  }
-}
-
-class Floor extends Cell {
-  next(_grid) {
-    return this;
-  }
+function useSeats(part) {
+  const { puzzleInput } = usePuzzleInput();
+  return part === 2 ? new UpdatedSeats(puzzleInput) : new Seats(puzzleInput);
 }
