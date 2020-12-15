@@ -55,6 +55,7 @@ class Seats {
           }, allSeats),
       new Map()
     );
+    this.dirty = Array.from(this.seats.values());
   }
 
   toString() {
@@ -79,17 +80,15 @@ class Seats {
   }
 
   step() {
-    let dirty = false;
-    const newSeats = new Map();
-
-    for (let seat of this.seats.values()) {
+    let seatsToCheck = Array.from(
+      new Set(this.dirty.flatMap((seat) => this.neighbors(seat)))
+    );
+    this.dirty = seatsToCheck.flatMap((seat) => {
       const newSeat = this.stepSeat(seat);
-      newSeats.set(this.keyFor(newSeat), newSeat);
-      if (newSeat !== seat) dirty = true;
-    }
-
-    this.seats = newSeats;
-    return dirty;
+      return newSeat === seat ? [] : [newSeat];
+    });
+    this.dirty.forEach((seat) => this.seats.set(this.keyFor(seat), seat));
+    return this.dirty.length > 0;
   }
 
   stepSeat(seat) {
@@ -114,13 +113,16 @@ class Seats {
     return 4;
   }
 
-  occupiedNeighbors(targetSeat) {
-    const { x, y } = targetSeat;
+  occupiedNeighbors(seat) {
+    return this.neighbors(seat).filter((seat) => seat.occupied);
+  }
+
+  neighbors({ x, y }) {
     return DELTAS.flatMap((dy) =>
       DELTAS.flatMap((dx) => {
         if (dx === 0 && dy === 0) return [];
         const seat = this.nearestNeighbor({ x, y, dx, dy });
-        return seat && seat.occupied ? [seat] : [];
+        return seat ? [seat] : [];
       })
     );
   }
@@ -130,7 +132,7 @@ class Seats {
   }
 
   keyFor({ x, y }) {
-    return JSON.stringify({ x, y });
+    return `${x},${y}`;
   }
 
   get(coords) {
