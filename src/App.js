@@ -115,6 +115,7 @@ const dateTimeForDay = (day) =>
   DateTime.fromObject({
     month: 12,
     day,
+  }, {
     zone: "America/New_York",
   });
 
